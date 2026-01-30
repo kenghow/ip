@@ -19,17 +19,38 @@ public class Ui {
         System.out.println(LINE);
     }
 
-    public void showAdded(String taskDescription) {
+    public void showAdded(Task task) {
         System.out.println(LINE);
-        System.out.println(" added: " + taskDescription);
+        System.out.println(" added: " + task.getDescription());
         System.out.println(LINE);
     }
 
     public void showList(TaskList taskList) {
         System.out.println(LINE);
+        System.out.println(" Here are the tasks in your list:");
         for (int i = 0; i < taskList.size(); i++) {
             System.out.println(" " + (i + 1) + ". " + taskList.get(i));
         }
+        System.out.println(LINE);
+    }
+
+    public void showMarked(Task task) {
+        System.out.println(LINE);
+        System.out.println(" Nice! I've marked this task as done:");
+        System.out.println("    " + task);
+        System.out.println(LINE);
+    }
+
+    public void showUnmarked(Task task) {
+        System.out.println(LINE);
+        System.out.println(" OK, I've marked this task as not done yet:");
+        System.out.println("    " + task);
+        System.out.println(LINE);
+    }
+
+    public void showError(String message) {
+        System.out.println(LINE);
+        System.out.println(" " + message);
         System.out.println(LINE);
     }
 }

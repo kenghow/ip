@@ -12,16 +12,51 @@ public class Minnie {
         while(true) {
             String userInput = scanner.nextLine();
             String trimmed = userInput.trim();
-            if ((trimmed).equals("bye")) {
+
+            if (trimmed.equals("bye")) {
                 ui.showGoodbye();
                 break;
-            } else if (trimmed.equals("list")) {
-                ui.showList(taskList);
-            } else {
-                taskList.add(userInput);
-                ui.showAdded(userInput);
             }
+
+            if (trimmed.equals("list")) {
+                ui.showList(taskList);
+                continue;
+            }
+
+            if (trimmed.startsWith("mark") || trimmed.startsWith("unmark")) {
+                String[] parts = trimmed.split("\\s+", 2);
+                if (parts.length < 2 || parts[1].trim().isEmpty()) {
+                    ui.showError("Please provide a task number after '" + parts[0] + ".");
+                    return;
+                }
+
+                try {
+                    int taskNumber = Integer.parseInt(parts[1].trim());
+                    if (trimmed.startsWith("mark")) {
+                        Task task = taskList.mark(taskNumber);
+                        ui.showMarked(task);
+                    } else {
+                        Task task = taskList.unmark(taskNumber);
+                        ui.showUnmarked(task);
+                    }
+                } catch (NumberFormatException e) {
+                    ui.showError("Task number must be an integer.");
+                } catch (IndexOutOfBoundsException e) {
+                    ui.showError(e.getMessage());
+                }
+                continue;
+            }
+
+            if (trimmed.isEmpty()) {
+                ui.showError("Please enter a task description");
+                continue;
+            }
+
+            Task added = taskList.add(trimmed);
+            ui.showAdded(added);
         }
         scanner.close();
     }
+
+
 }
