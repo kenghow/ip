@@ -1,19 +1,21 @@
+import java.util.Scanner;
+
 public class Minnie {
 
     public static void main(String[] args) {
-        printGreeting();
-        printGoodbye();
-    }
+        Ui ui = new Ui();
+        Scanner scanner = new Scanner(System.in);
 
-    public static void printGreeting() {
-        System.out.println("____________________________________________________________________________________________");
-        System.out.println(" Hello! I'm Minnie");
-        System.out.println(" What can I do for you?");
-        System.out.println("____________________________________________________________________________________________");
-    }
+        ui.showWelcome();
 
-    public static void printGoodbye() {
-        System.out.println(" Bye. Hope to see you again soon!");
-        System.out.println("____________________________________________________________________________________________");
+        while(true) {
+            String userInput = scanner.nextLine();
+            if ((userInput.trim()).equals("bye")) {
+                ui.showGoodbye();
+                break;
+            }
+            ui.echo(userInput);
+        }
+        scanner.close();
     }
 }
