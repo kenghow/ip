@@ -5,6 +5,7 @@ public class Minnie {
     public static void main(String[] args) {
         Ui ui = new Ui();
         TaskList taskList = new TaskList();
+        Parser parser = new Parser();
         Scanner scanner = new Scanner(System.in);
 
         ui.showWelcome();
@@ -52,8 +53,13 @@ public class Minnie {
                 continue;
             }
 
-            Task added = taskList.add(trimmed);
-            ui.showAdded(added);
+            try {
+                Task task = parser.parseTask(trimmed);
+                taskList.add(task);
+                ui.showAdded(task, taskList.size());
+            } catch (IllegalArgumentException e) {
+                ui.showError(e.getMessage());
+            }
         }
         scanner.close();
     }

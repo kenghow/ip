@@ -19,9 +19,11 @@ public class Ui {
         System.out.println(LINE);
     }
 
-    public void showAdded(Task task) {
+    public void showAdded(Task task, int totalTasks) {
         System.out.println(LINE);
-        System.out.println(" added: " + task.getDescription());
+        System.out.println(" Got it. I've added this task:");
+        System.out.println("  " + task);
+        System.out.println(" Now you have " + totalTasks + " tasks in the list.");
         System.out.println(LINE);
     }
 

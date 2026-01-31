@@ -9,8 +9,7 @@ public class TaskList {
         size = 0;
     }
 
-    public Task add(String taskDescription) {
-        Task task = new Task(taskDescription);
+    public Task add(Task task) {
         tasks[size] = task;
         size++;
         return task;
