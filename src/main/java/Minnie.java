@@ -53,6 +53,28 @@ public class Minnie {
                     continue;
                 }
 
+                if (trimmed.startsWith("delete")) {
+                    String[] parts = trimmed.split("\\s+", 2);
+                    if (parts.length < 2 || parts[1].trim().isEmpty()) {
+                        throw new MinnieException("Please provides a task number after 'delete'.");
+                    }
+
+                    int taskNumber;
+                    try {
+                        taskNumber = Integer.parseInt(parts[1].trim());
+                    } catch (NumberFormatException e) {
+                        throw new MinnieException("Task number must be an integer.");
+                    }
+
+                    try {
+                        Task deleted = taskList.delete(taskNumber);
+                        ui.showDeleted(deleted, taskList.size());
+                    } catch (IndexOutOfBoundsException e) {
+                        throw new MinnieException(e.getMessage());
+                    }
+                    continue;
+                }
+
                 if (trimmed.isEmpty()) {
                     throw new MinnieException("Please enter a command.");
                 }

@@ -1,32 +1,30 @@
-public class TaskList {
-    private static final int CAPACITY = 100;
+import java.util.ArrayList;
 
-    private final Task[] tasks;
-    private int size;
+public class TaskList {
+
+    private final ArrayList<Task> tasks;
 
     public TaskList() {
-        tasks = new Task[CAPACITY];
-        size = 0;
+        this.tasks = new ArrayList<>();
     }
 
     public Task add(Task task) {
-        tasks[size] = task;
-        size++;
+        tasks.add(task);
         return task;
     }
 
     public int size() {
-        return size;
+        return tasks.size();
     }
 
     public Task get(int index) {
-        return tasks[index];
+        return tasks.get(index);
     }
 
     public Task mark(int oneBasedIndex) {
         int zeroBasedIndex = oneBasedIndex - 1;
         ensureValidIndex(zeroBasedIndex);
-        Task task = tasks[zeroBasedIndex];
+        Task task = tasks.get(zeroBasedIndex);
         task.markAsDone();
         return task;
     }
@@ -34,13 +32,19 @@ public class TaskList {
     public Task unmark(int oneBasedIndex) {
         int zeroBasedIndex = oneBasedIndex - 1;
         ensureValidIndex(zeroBasedIndex);
-        Task task = tasks[zeroBasedIndex];
+        Task task = tasks.get(zeroBasedIndex);
         task.markAsNotDone();
         return task;
     }
 
+    public Task delete(int oneBasedIndex) {
+        int zeroBasedIndex = oneBasedIndex - 1;
+        ensureValidIndex(zeroBasedIndex);
+        return tasks.remove(zeroBasedIndex);
+    }
+
     private void ensureValidIndex(int index) {
-        if (index < 0 || index >= size) {
+        if (index < 0 || index >= tasks.size()) {
             throw new IndexOutOfBoundsException("Task number is out of range");
         }
     }

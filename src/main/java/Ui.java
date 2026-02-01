@@ -50,6 +50,14 @@ public class Ui {
         System.out.println(LINE);
     }
 
+    public void showDeleted(Task task, int totalTasks) {
+        System.out.println(LINE);
+        System.out.println(" Noted. I've removed this task:");
+        System.out.println("   " + task);
+        System.out.println(" Now you have " + totalTasks + " tasks in the list.");
+        System.out.println(LINE);
+    }
+
     public void showError(String message) {
         System.out.println(LINE);
         System.out.println("Oopss! " + message);
