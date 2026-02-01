@@ -52,7 +52,7 @@ public class Ui {
 
     public void showError(String message) {
         System.out.println(LINE);
-        System.out.println(" " + message);
+        System.out.println("Oopss! " + message);
         System.out.println(LINE);
     }
 }
