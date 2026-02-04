@@ -4,6 +4,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 public class Storage {
     private final Path filePath;
@@ -71,7 +73,12 @@ public class Storage {
                 if (parts.length < 4) {
                     throw new MinnieException("Data file is corrupted: " + line);
                 }
-                task = new Deadline(desc, parts[3]);
+                try {
+                    LocalDate by = LocalDate.parse(parts[3]);
+                    task = new Deadline(desc, by);
+                } catch (DateTimeParseException e) {
+                    throw new MinnieException("Data file has an invalid date: " + parts[3]);
+                }
                 break;
             case "E":
                 if (parts.length < 5) {
@@ -108,7 +115,7 @@ public class Storage {
         }
         if (task instanceof Deadline) {
             Deadline d = (Deadline) task;
-            return "D | " + done + " | " + d.description + " | " + d.by;
+            return "D | " + done + " | " + d.description + " | " + d.getBy();
         }
         if (task instanceof Event) {
             Event e = (Event) task;

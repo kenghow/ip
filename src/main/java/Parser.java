@@ -1,3 +1,6 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
 public class Parser {
 
     public Task parseTask(String input) throws MinnieException {
@@ -35,13 +38,20 @@ public class Parser {
     private Deadline parseDeadline(String rest) throws MinnieException {
         String[] parts = rest.split(" /by", 2);
         if (parts.length < 2) {
-            throw new MinnieException("Deadline format: deadline <desc> /by <time>");
+            throw new MinnieException("Deadline format: deadline <desc> /by <yyyy-mm-dd>");
         }
         String desc = parts[0].trim();
-        String by = parts[1].trim();
+        String byRaw = parts[1].trim();
+
         ensureNotEmpty(desc, "The description of a deadline cannot be empty.");
-        ensureNotEmpty(by, "The /by value cannot be empty");
-        return new Deadline(desc, by);
+        ensureNotEmpty(byRaw, "The /by value cannot be empty.");
+
+        try {
+            LocalDate by = LocalDate.parse(byRaw);
+            return new Deadline(desc, by);
+        } catch (DateTimeParseException e) {
+            throw new MinnieException("Please use data format yyyy-mm-dd, eg 2026-09-01.");
+        }
     }
 
     private Event parseEvent(String rest) throws MinnieException {
