@@ -1,3 +1,5 @@
+package minnie;
+
 import java.util.ArrayList;
 
 public class TaskList {
@@ -49,7 +51,7 @@ public class TaskList {
 
     private void ensureValidIndex(int index) {
         if (index < 0 || index >= tasks.size()) {
-            throw new IndexOutOfBoundsException("Task number is out of range");
+            throw new IndexOutOfBoundsException("minnie.Task number is out of range");
         }
     }
 }
