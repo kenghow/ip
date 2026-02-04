@@ -2,25 +2,34 @@ import java.util.Scanner;
 
 public class Minnie {
 
-    public static void main(String[] args) {
-        Ui ui = new Ui();
-        TaskList taskList = new TaskList();
-        Parser parser = new Parser();
-        Scanner scanner = new Scanner(System.in);
-        Storage storage = new Storage("data/minnie.txt");
+    private static final String DEFAULT_FILE_PATH = "data/minnie.txt";
 
+    private final Ui ui;
+    private final Parser parser;
+    private final Storage storage;
+    private final TaskList taskList;
+
+    public Minnie(String filePath) {
+        ui = new Ui();
+        parser = new Parser();
+        storage = new Storage(filePath);
+
+        TaskList loaded;
         try {
-            taskList = new TaskList(storage.load());
+            loaded = new TaskList(storage.load());
         } catch (MinnieException e) {
-            taskList = new TaskList();
             ui.showError(e.getMessage());
+            loaded = new TaskList();
         }
+        taskList = loaded;
+    }
 
+    public void run() {
         ui.showWelcome();
 
+        Scanner scanner = new Scanner(System.in);
         while (true) {
-            String userInput = scanner.nextLine();
-            String trimmed = userInput.trim();
+            String trimmed = scanner.nextLine().trim();
 
             try {
                 if (trimmed.equals("bye")) {
@@ -34,55 +43,12 @@ public class Minnie {
                 }
 
                 if (trimmed.startsWith("mark") || trimmed.startsWith("unmark")) {
-                    String[] parts = trimmed.split("\\s+", 2);
-                    if (parts.length < 2 || parts[1].trim().isEmpty()) {
-                        throw new MinnieException("Please provide a task number after '" + parts[0] + "'.");
-                    }
-
-                    int taskNumber;
-                    try {
-                        taskNumber = Integer.parseInt(parts[1].trim());
-                    } catch (NumberFormatException e) {
-                        throw new MinnieException("Task number must be an integer.");
-                    }
-
-                    try {
-                        if (trimmed.startsWith("mark")) {
-                            Task task = taskList.mark(taskNumber);
-                            storage.save(taskList);
-                            ui.showMarked(task);
-                        } else {
-                            Task task = taskList.unmark(taskNumber);
-                            storage.save(taskList);
-                            ui.showUnmarked(task);
-                        }
-                    } catch (IndexOutOfBoundsException e) {
-                        throw new MinnieException(e.getMessage());
-                    }
-
+                    handleMarkUnmark(trimmed);
                     continue;
                 }
 
                 if (trimmed.startsWith("delete")) {
-                    String[] parts = trimmed.split("\\s+", 2);
-                    if (parts.length < 2 || parts[1].trim().isEmpty()) {
-                        throw new MinnieException("Please provides a task number after 'delete'.");
-                    }
-
-                    int taskNumber;
-                    try {
-                        taskNumber = Integer.parseInt(parts[1].trim());
-                    } catch (NumberFormatException e) {
-                        throw new MinnieException("Task number must be an integer.");
-                    }
-
-                    try {
-                        Task deleted = taskList.delete(taskNumber);
-                        storage.save(taskList);
-                        ui.showDeleted(deleted, taskList.size());
-                    } catch (IndexOutOfBoundsException e) {
-                        throw new MinnieException(e.getMessage());
-                    }
+                    handleDelete(trimmed);
                     continue;
                 }
 
@@ -91,7 +57,7 @@ public class Minnie {
                 }
 
                 // Everything else is treated as an "add task" command (todo/deadline/event)
-                Task task = parser.parseTask(trimmed); // <-- now throws DukeException
+                Task task = parser.parseTask(trimmed);
                 taskList.add(task);
                 storage.save(taskList);
                 ui.showAdded(task, taskList.size());
@@ -102,5 +68,57 @@ public class Minnie {
         }
 
         scanner.close();
+    }
+
+    private void handleMarkUnmark(String trimmed) throws MinnieException {
+        String[] parts = trimmed.split("\\s+", 2);
+        if (parts.length < 2 || parts[1].trim().isEmpty()) {
+            throw new MinnieException("Please provide a task number after '" + parts[0] + "'.");
+        }
+
+        int taskNumber = parseTaskNumber(parts[1].trim());
+
+        try {
+            if (trimmed.startsWith("mark")) {
+                Task task = taskList.mark(taskNumber);
+                storage.save(taskList);
+                ui.showMarked(task);
+            } else {
+                Task task = taskList.unmark(taskNumber);
+                storage.save(taskList);
+                ui.showUnmarked(task);
+            }
+        } catch (IndexOutOfBoundsException e) {
+            throw new MinnieException(e.getMessage());
+        }
+    }
+
+    private void handleDelete(String trimmed) throws MinnieException {
+        String[] parts = trimmed.split("\\s+", 2);
+        if (parts.length < 2 || parts[1].trim().isEmpty()) {
+            throw new MinnieException("Please provide a task number after 'delete'.");
+        }
+
+        int taskNumber = parseTaskNumber(parts[1].trim());
+
+        try {
+            Task deleted = taskList.delete(taskNumber);
+            storage.save(taskList);
+            ui.showDeleted(deleted, taskList.size());
+        } catch (IndexOutOfBoundsException e) {
+            throw new MinnieException(e.getMessage());
+        }
+    }
+
+    private int parseTaskNumber(String raw) throws MinnieException {
+        try {
+            return Integer.parseInt(raw);
+        } catch (NumberFormatException e) {
+            throw new MinnieException("Task number must be an integer.");
+        }
+    }
+
+    public static void main(String[] args) {
+        new Minnie(DEFAULT_FILE_PATH).run();
     }
 }
