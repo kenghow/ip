@@ -1,3 +1,5 @@
+package minnie;
+
 import java.util.Scanner;
 
 public class Minnie {
@@ -114,7 +116,7 @@ public class Minnie {
         try {
             return Integer.parseInt(raw);
         } catch (NumberFormatException e) {
-            throw new MinnieException("Task number must be an integer.");
+            throw new MinnieException("minnie.Task number must be an integer.");
         }
     }
 
