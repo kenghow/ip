@@ -7,6 +7,14 @@ public class Minnie {
         TaskList taskList = new TaskList();
         Parser parser = new Parser();
         Scanner scanner = new Scanner(System.in);
+        Storage storage = new Storage("data/minnie.txt");
+
+        try {
+            taskList = new TaskList(storage.load());
+        } catch (MinnieException e) {
+            taskList = new TaskList();
+            ui.showError(e.getMessage());
+        }
 
         ui.showWelcome();
 
@@ -41,9 +49,11 @@ public class Minnie {
                     try {
                         if (trimmed.startsWith("mark")) {
                             Task task = taskList.mark(taskNumber);
+                            storage.save(taskList);
                             ui.showMarked(task);
                         } else {
                             Task task = taskList.unmark(taskNumber);
+                            storage.save(taskList);
                             ui.showUnmarked(task);
                         }
                     } catch (IndexOutOfBoundsException e) {
@@ -68,6 +78,7 @@ public class Minnie {
 
                     try {
                         Task deleted = taskList.delete(taskNumber);
+                        storage.save(taskList);
                         ui.showDeleted(deleted, taskList.size());
                     } catch (IndexOutOfBoundsException e) {
                         throw new MinnieException(e.getMessage());
@@ -82,6 +93,7 @@ public class Minnie {
                 // Everything else is treated as an "add task" command (todo/deadline/event)
                 Task task = parser.parseTask(trimmed); // <-- now throws DukeException
                 taskList.add(task);
+                storage.save(taskList);
                 ui.showAdded(task, taskList.size());
 
             } catch (MinnieException e) {
