@@ -125,7 +125,7 @@ public class Minnie {
         try {
             return Integer.parseInt(raw);
         } catch (NumberFormatException e) {
-            throw new MinnieException("minnie.Task number must be an integer.");
+            throw new MinnieException("Task number must be an integer.");
         }
     }
 

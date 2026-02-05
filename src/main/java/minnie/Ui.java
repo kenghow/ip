@@ -12,7 +12,7 @@ public class Ui {
      */
     public void showWelcome() {
         System.out.println(LINE);
-        System.out.println(" Hello! I'm minnie.Minnie");
+        System.out.println(" Hello! I'm Minnie");
         System.out.println(" What can I do for you?");
         System.out.println(LINE);
     }
