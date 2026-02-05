@@ -2,11 +2,6 @@ package minnie;
 
 import java.util.Scanner;
 
-/**
- * The entry point of the Minnie chatbot application.
- * Coordinates user interaction (UI), command interpretation (Parser)
- * task operations (TaskList), and persistence (Storage).
- */
 public class Minnie {
 
     private static final String DEFAULT_FILE_PATH = "data/minnie.txt";
@@ -31,10 +26,6 @@ public class Minnie {
         taskList = loaded;
     }
 
-    /**
-     * Runs the main real-eval-print loop of the chatbot until the user exits.
-     * Reads commands from standard input, executes the command, and prints responses.
-     */
     public void run() {
         ui.showWelcome();
 
@@ -129,10 +120,6 @@ public class Minnie {
         }
     }
 
-    /**
-     * Lauches the Minnie chatbot application.
-     * @param args Command-line argument (unused).
-     */
     public static void main(String[] args) {
         new Minnie(DEFAULT_FILE_PATH).run();
     }

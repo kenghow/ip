@@ -1,15 +1,8 @@
 package minnie;
 
-/**
- * Handles all user-facing input/output for the chatbot.
- * Centralizes printed messages to keep core logic separate from presentation.
- */
 public class Ui {
     private static final String LINE = "__________________________________________________________";
 
-    /**
-     * Prints the welcome message shown when the application starts.
-     */
     public void showWelcome() {
         System.out.println(LINE);
         System.out.println(" Hello! I'm minnie.Minnie");
@@ -67,10 +60,6 @@ public class Ui {
         System.out.println(LINE);
     }
 
-    /**
-     * Prints an error message to the user.
-     * @param message Explanation of what went wrong.
-     */
     public void showError(String message) {
         System.out.println(LINE);
         System.out.println("Oopss! " + message);

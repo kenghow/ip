@@ -3,18 +3,8 @@ package minnie;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-/**
- * Parses user input strings into task objects or structured command data.
- * Ensures command formats are valid before tasks are created.
- */
 public class Parser {
 
-    /**
-     * Parses a user command into a task
-     * @param input Full user input line.
-     * @return The parse Task instance.
-     * @throws MinnieException If the input does not match a supported task format.
-     */
     public Task parseTask(String input) throws MinnieException {
         String trimmed = input.trim();
 
