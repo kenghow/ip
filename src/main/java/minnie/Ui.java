@@ -69,12 +69,6 @@ public class Ui {
         System.out.println(LINE);
     }
 
-<<<<<<< HEAD
-    /**
-     * Prints an error message to the user.
-     * @param message Explanation of what went wrong.
-     */
-=======
     public void showFindResults(TaskList taskList, ArrayList<Integer> matches) {
         System.out.println(LINE);
 
@@ -91,7 +85,10 @@ public class Ui {
         System.out.println(LINE);
     }
 
->>>>>>> branch-Level-9
+    /**
+     * Prints an error message to the user.
+     * @param message Explanation of what went wrong.
+     */
     public void showError(String message) {
         System.out.println(LINE);
         System.out.println("Oopss! " + message);
