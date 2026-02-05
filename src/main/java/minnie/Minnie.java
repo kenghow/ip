@@ -1,6 +1,7 @@
 package minnie;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Minnie {
 
@@ -51,6 +52,11 @@ public class Minnie {
 
                 if (trimmed.startsWith("delete")) {
                     handleDelete(trimmed);
+                    continue;
+                }
+
+                if (trimmed.startsWith("find")) {
+                    handleFind(trimmed);
                     continue;
                 }
 
@@ -110,6 +116,16 @@ public class Minnie {
         } catch (IndexOutOfBoundsException e) {
             throw new MinnieException(e.getMessage());
         }
+    }
+
+    private void handleFind(String trimmed) throws MinnieException {
+        String[] parts = trimmed.split("\\s+", 2);
+        if (parts.length < 2 || parts[1].trim().isEmpty()) {
+            throw new MinnieException("Please provide a keyword after 'find'.");
+        }
+        String keyword = parts[1].trim();
+        ArrayList<Integer> matches = taskList.find(keyword);
+        ui.showFindResults(taskList, matches);
     }
 
     private int parseTaskNumber(String raw) throws MinnieException {

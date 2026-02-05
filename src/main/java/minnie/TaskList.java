@@ -49,6 +49,19 @@ public class TaskList {
         return tasks.remove(zeroBasedIndex);
     }
 
+    public ArrayList<Integer> find(String keyword) {
+        ArrayList<Integer> matches = new ArrayList<>();
+        String needle = keyword.toLowerCase();
+
+        for (int i = 0; i < tasks.size(); i++) {
+            String haystack = tasks.get(i).getDescription().toLowerCase();
+            if (haystack.contains(needle)) {
+                matches.add(i);
+            }
+        }
+        return matches;
+    }
+
     private void ensureValidIndex(int index) {
         if (index < 0 || index >= tasks.size()) {
             throw new IndexOutOfBoundsException("minnie.Task number is out of range");

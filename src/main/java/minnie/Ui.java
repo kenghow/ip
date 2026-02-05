@@ -1,5 +1,7 @@
 package minnie;
 
+import java.util.ArrayList;
+
 public class Ui {
     private static final String LINE = "__________________________________________________________";
 
@@ -57,6 +59,22 @@ public class Ui {
         System.out.println(" Noted. I've removed this task:");
         System.out.println("   " + task);
         System.out.println(" Now you have " + totalTasks + " tasks in the list.");
+        System.out.println(LINE);
+    }
+
+    public void showFindResults(TaskList taskList, ArrayList<Integer> matches) {
+        System.out.println(LINE);
+
+        if (matches.isEmpty()) {
+            System.out.println(" No matching tasks found");
+            System.out.println(LINE);
+            return;
+        }
+
+        System.out.println(" Here are the matching tasks in your list:");
+        for (int index : matches) {
+            System.out.println(" " + (index + 1) + ". " + taskList.get(index));
+        }
         System.out.println(LINE);
     }
 
