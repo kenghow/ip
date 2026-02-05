@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Handles loading tasks from disk and saving tasks to disk.
@@ -126,18 +126,18 @@ public class Storage {
     }
 
     private String serialize(Task task) throws MinnieException {
-        String done = task.isDone ? "1" : "0";
+        String done = task.isDone() ? "1" : "0";
 
         if (task instanceof Todo) {
-            return "T | " + done + " | " + task.description;
+            return "T | " + done + " | " + task.getDescription();
         }
         if (task instanceof Deadline) {
             Deadline d = (Deadline) task;
-            return "D | " + done + " | " + d.description + " | " + d.getBy();
+            return "D | " + done + " | " + d.getDescription() + " | " + d.getBy();
         }
         if (task instanceof Event) {
             Event e = (Event) task;
-            return "E | " + done + " | " + e.description + " | " + e.from + " | " + e.to;
+            return "E | " + done + " | " + e.getDescription() + " | " + e.getFrom() + " | " + e.getTo();
         }
 
         throw new MinnieException("Unknown task type.");

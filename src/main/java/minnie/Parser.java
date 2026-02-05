@@ -50,7 +50,7 @@ public class Parser {
     private Deadline parseDeadline(String rest) throws MinnieException {
         String[] parts = rest.split(" /by", 2);
         if (parts.length < 2) {
-            throw new MinnieException("minnie.Deadline format: deadline <desc> /by <yyyy-mm-dd>");
+            throw new MinnieException("Deadline format: deadline <desc> /by <yyyy-mm-dd>");
         }
         String desc = parts[0].trim();
         String byRaw = parts[1].trim();
@@ -62,20 +62,20 @@ public class Parser {
             LocalDate by = LocalDate.parse(byRaw);
             return new Deadline(desc, by);
         } catch (DateTimeParseException e) {
-            throw new MinnieException("Please use data format yyyy-mm-dd, eg 2026-09-01.");
+            throw new MinnieException("Please use date format yyyy-mm-dd, eg 2026-09-01.");
         }
     }
 
     private Event parseEvent(String rest) throws MinnieException {
         String[] fromSplit = rest.split(" /from ", 2);
         if (fromSplit.length < 2) {
-            throw new MinnieException("minnie.Event format: event <desc> /from <start> /to <end>");
+            throw new MinnieException("Event format: event <desc> /from <start> /to <end>");
         }
         String desc = fromSplit[0].trim();
 
         String[] toSplit = fromSplit[1].split(" /to ", 2);
         if (toSplit.length < 2) {
-            throw new MinnieException("minnie.Event format: event <desc> /from <start> /to <end>");
+            throw new MinnieException("Event format: event <desc> /from <start> /to <end>");
         }
         String from = toSplit[0].trim();
         String to = toSplit[1].trim();
