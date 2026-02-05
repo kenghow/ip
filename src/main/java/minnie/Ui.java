@@ -1,5 +1,7 @@
 package minnie;
 
+import java.util.ArrayList;
+
 /**
  * Handles all user-facing input/output for the chatbot.
  * Centralizes printed messages to keep core logic separate from presentation.
@@ -67,10 +69,29 @@ public class Ui {
         System.out.println(LINE);
     }
 
+<<<<<<< HEAD
     /**
      * Prints an error message to the user.
      * @param message Explanation of what went wrong.
      */
+=======
+    public void showFindResults(TaskList taskList, ArrayList<Integer> matches) {
+        System.out.println(LINE);
+
+        if (matches.isEmpty()) {
+            System.out.println(" No matching tasks found");
+            System.out.println(LINE);
+            return;
+        }
+
+        System.out.println(" Here are the matching tasks in your list:");
+        for (int index : matches) {
+            System.out.println(" " + (index + 1) + ". " + taskList.get(index));
+        }
+        System.out.println(LINE);
+    }
+
+>>>>>>> branch-Level-9
     public void showError(String message) {
         System.out.println(LINE);
         System.out.println("Oopss! " + message);
