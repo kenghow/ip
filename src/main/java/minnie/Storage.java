@@ -9,6 +9,10 @@ import java.util.List;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Handles loading tasks from disk and saving tasks to disk.
+ * Stores data in a simple line-based format under relative file path.
+ */
 public class Storage {
     private final Path filePath;
 
@@ -16,6 +20,12 @@ public class Storage {
         this.filePath = Paths.get(relativePath);
     }
 
+    /**
+     * Loads tasks from the data file.
+     * If the file does not exist, returns an empty task list.
+     * @return Tasks loaded from disk.
+     * @throws MinnieException If an I/O error occurs or the file format is invalid.
+     */
     public ArrayList<Task> load() throws MinnieException {
         if (!Files.exists(filePath)) {
             return new ArrayList<>();
@@ -38,6 +48,12 @@ public class Storage {
         }
     }
 
+    /**
+     * Saves the current task list to disk, overwriting the existing file content.
+     * Creates the parent directory if it does not exist.
+     * @param taskList The task list to persist.
+     * @throws MinnieException If an I/O error occurs while saving.
+     */
     public void save(TaskList taskList) throws MinnieException {
         try {
             Path parent = filePath.getParent();
