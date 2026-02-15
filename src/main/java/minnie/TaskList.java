@@ -37,8 +37,8 @@ public class TaskList {
     }
 
     /**
-     * Returns the task at the given 0-based index (for internal use).
-     * @param index 0-based index
+     * Returns the task at the given 1-based index (for internal use).
+     * @param index 1-based index
      * @return The task at the index.
      */
     public Task get(int index) {
@@ -99,5 +99,18 @@ public class TaskList {
         if (index < 0 || index >= tasks.size()) {
             throw new IndexOutOfBoundsException("Task number is out of range");
         }
+    }
+
+    @Override
+    public String toString() {
+        if (tasks.isEmpty()) {
+            return "Your task list is empty.";
+        }
+
+        StringBuilder sb = new StringBuilder("Here are the tasks in your list:\n");
+        for (int i = 0; i < tasks.size(); i++) {
+            sb.append(i + 1).append(". ").append(tasks.get(i)).append("\n");
+        }
+        return sb.toString().trim();
     }
 }
