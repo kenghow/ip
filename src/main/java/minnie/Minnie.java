@@ -1,24 +1,20 @@
 package minnie;
 
-import java.util.Scanner;
 import java.util.ArrayList;
 
-/**
- * The entry point of the Minnie chatbot application.
- * Coordinates user interaction (UI), command interpretation (Parser)
- * task operations (TaskList), and persistence (Storage).
- */
 public class Minnie {
 
     private static final String DEFAULT_FILE_PATH = "data/minnie.txt";
 
-    private final Ui ui;
     private final Parser parser;
     private final Storage storage;
     private final TaskList taskList;
 
+    public Minnie() {
+        this(DEFAULT_FILE_PATH);
+    }
+
     public Minnie(String filePath) {
-        ui = new Ui();
         parser = new Parser();
         storage = new Storage(filePath);
 
@@ -26,130 +22,119 @@ public class Minnie {
         try {
             loaded = new TaskList(storage.load());
         } catch (MinnieException e) {
-            ui.showError(e.getMessage());
             loaded = new TaskList();
         }
         taskList = loaded;
     }
 
+    public String getWelcomeMessage() {
+        return "Hello! I'm Minnie.\nWhat can I do for you?";
+    }
+
     /**
-     * Runs the main real-eval-print loop of the chatbot until the user exits.
-     * Reads commands from standard input, executes the command, and prints responses.
+     * GUI entry-point: takes user input, returns Minnie response text.
      */
-    public void run() {
-        ui.showWelcome();
-
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            String trimmed = scanner.nextLine().trim();
-
-            try {
-                if (trimmed.equals("bye")) {
-                    ui.showGoodbye();
-                    break;
-                }
-
-                if (trimmed.equals("list")) {
-                    ui.showList(taskList);
-                    continue;
-                }
-
-                if (trimmed.startsWith("mark") || trimmed.startsWith("unmark")) {
-                    handleMarkUnmark(trimmed);
-                    continue;
-                }
-
-                if (trimmed.startsWith("delete")) {
-                    handleDelete(trimmed);
-                    continue;
-                }
-
-                if (trimmed.startsWith("find")) {
-                    handleFind(trimmed);
-                    continue;
-                }
-
-                if (trimmed.isEmpty()) {
-                    throw new MinnieException("Please enter a command.");
-                }
-
-                // Everything else is treated as an "add task" command (todo/deadline/event)
-                Task task = parser.parseTask(trimmed);
-                taskList.add(task);
-                storage.save(taskList);
-                ui.showAdded(task, taskList.size());
-
-            } catch (MinnieException e) {
-                ui.showError(e.getMessage());
-            }
-        }
-
-        scanner.close();
-    }
-
-    private void handleMarkUnmark(String trimmed) throws MinnieException {
-        String[] parts = trimmed.split("\\s+", 2);
-        if (parts.length < 2 || parts[1].trim().isEmpty()) {
-            throw new MinnieException("Please provide a task number after '" + parts[0] + "'.");
-        }
-
-        int taskNumber = parseTaskNumber(parts[1].trim());
+    public String getResponse(String input) {
+        String trimmed = (input == null) ? "" : input.trim();
 
         try {
+            if (trimmed.isEmpty()) {
+                throw new MinnieException("Please enter a command.");
+            }
+
+            if (trimmed.equals("bye")) {
+                return "Bye. Hope to see you again soon!";
+            }
+
+            if (trimmed.equals("list")) {
+                return taskList.toString();
+            }
+
             if (trimmed.startsWith("mark")) {
-                Task task = taskList.mark(taskNumber);
-                storage.save(taskList);
-                ui.showMarked(task);
-            } else {
-                Task task = taskList.unmark(taskNumber);
-                storage.save(taskList);
-                ui.showUnmarked(task);
+                int n = parseTaskNumber(trimmed, "mark");
+                if (n > taskList.size()) {
+                    throw new MinnieException("Error: Invalid task id!");
+                }
+                try {
+                    Task t = taskList.mark(n);
+                    storage.save(taskList);
+                    return "Nice! I've marked this task as done:\n" + t;
+                } catch (IndexOutOfBoundsException e) {
+                    throw new MinnieException("Error: Invalid task id!");
+                }
             }
-        } catch (IndexOutOfBoundsException e) {
-            throw new MinnieException(e.getMessage());
-        }
-    }
 
-    private void handleDelete(String trimmed) throws MinnieException {
-        String[] parts = trimmed.split("\\s+", 2);
-        if (parts.length < 2 || parts[1].trim().isEmpty()) {
-            throw new MinnieException("Please provide a task number after 'delete'.");
-        }
+            if (trimmed.startsWith("unmark")) {
+                int n = parseTaskNumber(trimmed, "unmark");
 
-        int taskNumber = parseTaskNumber(parts[1].trim());
+                if (n > taskList.size()) {
+                    throw new MinnieException("Error: Invalid task id!");
+                }
+                try {
+                    Task t = taskList.unmark(n);
+                    storage.save(taskList);
+                    return "OK, I've marked this task as not done yet:\n" + t;
+                } catch (IndexOutOfBoundsException e) {
+                    throw new MinnieException("Error: Invalid task id!");
+                }
+            }
 
-        try {
-            Task deleted = taskList.delete(taskNumber);
+            if (trimmed.startsWith("delete")) {
+                int n = parseTaskNumber(trimmed, "delete");
+                Task deleted = taskList.delete(n);
+                storage.save(taskList);
+                return "Noted. I've removed this task:\n" + deleted
+                        + "\nNow you have " + taskList.size() + " tasks in the list.";
+            }
+
+            if (trimmed.startsWith("find")) {
+                String keyword = parseFindKeyword(trimmed);
+                ArrayList<Integer> matches = taskList.find(keyword);
+
+                if (matches.isEmpty()) {
+                    return "No matching tasks found.";
+                }
+
+                StringBuilder sb = new StringBuilder("Here are the matching tasks in your list:\n");
+                for (int taskNumber : matches) {
+                    sb.append(taskNumber + 1).append(". ").append(taskList.get(taskNumber)).append("\n");
+                }
+                return sb.toString().trim();
+            }
+
+            // Otherwise: add task (todo/deadline/event)
+            Task task = parser.parseTask(trimmed);
+            taskList.add(task);
             storage.save(taskList);
-            ui.showDeleted(deleted, taskList.size());
-        } catch (IndexOutOfBoundsException e) {
-            throw new MinnieException(e.getMessage());
+            return "Got it. I've added this task:\n" + task
+                    + "\nNow you have " + taskList.size() + " tasks in the list.";
+
+        } catch (MinnieException e) {
+            return e.getMessage();
         }
     }
 
-    private void handleFind(String trimmed) throws MinnieException {
-        String[] parts = trimmed.split("\\s+", 2);
+    private int parseTaskNumber(String input, String commandWord) throws MinnieException {
+        String[] parts = input.split("\\s+", 2);
         if (parts.length < 2 || parts[1].trim().isEmpty()) {
-            throw new MinnieException("Please provide a keyword after 'find'.");
+            throw new MinnieException("Please provide a task number after '" + commandWord + "'.");
         }
-        String keyword = parts[1].trim();
-        ArrayList<Integer> matches = taskList.find(keyword);
-        ui.showFindResults(taskList, matches);
-    }
-
-    private int parseTaskNumber(String raw) throws MinnieException {
         try {
-            return Integer.parseInt(raw);
+            int n = Integer.parseInt(parts[1].trim());
+            if (n <= 0) {
+                throw new MinnieException("Task number must be a positive integer.");
+            }
+            return n;
         } catch (NumberFormatException e) {
             throw new MinnieException("Task number must be an integer.");
         }
     }
 
-    /**
-     * Lauches the Minnie chatbot application.
-     * @param args Command-line argument (unused).
-     */
-    public static void main(String[] args) {
-        new Minnie(DEFAULT_FILE_PATH).run();
+    private String parseFindKeyword(String input) throws MinnieException {
+        String[] parts = input.split("\\s+", 2);
+        if (parts.length < 2 || parts[1].trim().isEmpty()) {
+            throw new MinnieException("Please provide a keyword after 'find'.");
+        }
+        return parts[1].trim();
     }
 }
