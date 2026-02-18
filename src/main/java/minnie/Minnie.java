@@ -52,11 +52,13 @@ public class Minnie {
 
             if (trimmed.startsWith("mark")) {
                 int n = parseTaskNumber(trimmed, "mark");
+                assert n > 0 : "Task number should be positive after parseTaskNumber";
                 if (n > taskList.size()) {
                     throw new MinnieException("Error: Invalid task id!");
                 }
                 try {
                     Task t = taskList.mark(n);
+                    assert t != null : "Task returned by mark() should not be null";
                     storage.save(taskList);
                     return "Nice! I've marked this task as done:\n" + t;
                 } catch (IndexOutOfBoundsException e) {
@@ -66,12 +68,14 @@ public class Minnie {
 
             if (trimmed.startsWith("unmark")) {
                 int n = parseTaskNumber(trimmed, "unmark");
+                assert n > 0 : "Task number should be positive after parseTaskNumber";
 
                 if (n > taskList.size()) {
                     throw new MinnieException("Error: Invalid task id!");
                 }
                 try {
                     Task t = taskList.unmark(n);
+                    assert t != null : "Task returned by unmark() should not be null";
                     storage.save(taskList);
                     return "OK, I've marked this task as not done yet:\n" + t;
                 } catch (IndexOutOfBoundsException e) {

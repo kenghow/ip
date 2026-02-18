@@ -17,6 +17,7 @@ public class Storage {
     private final Path filePath;
 
     public Storage(String relativePath) {
+        assert relativePath != null : "filePath should not be null";
         this.filePath = Paths.get(relativePath);
     }
 
@@ -55,6 +56,7 @@ public class Storage {
      * @throws MinnieException If an I/O error occurs while saving.
      */
     public void save(TaskList taskList) throws MinnieException {
+        assert taskList != null : "taskList should not be null";
         try {
             Path parent = filePath.getParent();
             if (parent != null) {
