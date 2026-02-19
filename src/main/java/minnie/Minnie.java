@@ -67,7 +67,6 @@ public class Minnie {
                 default:
                     return handleAddTask(trimmed);
             }
-
         } catch (MinnieException e) {
             return e.getMessage();
         } catch (IndexOutOfBoundsException e) {
