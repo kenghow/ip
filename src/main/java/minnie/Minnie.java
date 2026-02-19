@@ -6,6 +6,13 @@ public class Minnie {
 
     private static final String DEFAULT_FILE_PATH = "data/minnie.txt";
 
+    private static final String COMMAND_BYE = "bye";
+    private static final String COMMAND_LIST = "list";
+    private static final String COMMAND_MARK = "mark";
+    private static final String COMMAND_UNMARK = "unmark";
+    private static final String COMMAND_DELETE = "delete";
+    private static final String COMMAND_FIND = "find";
+
     private final Parser parser;
     private final Storage storage;
     private final TaskList taskList;
@@ -42,76 +49,88 @@ public class Minnie {
                 throw new MinnieException("Please enter a command.");
             }
 
-            if (trimmed.equals("bye")) {
-                return "Bye. Hope to see you again soon!";
+            String commandWord = firstWord(trimmed);
+
+            switch (commandWord) {
+                case COMMAND_BYE:
+                    return "Bye. Hope to see you again soon!";
+                case COMMAND_LIST:
+                    return handleList();
+                case COMMAND_MARK:
+                    return handleMarkUnmark(trimmed, true);
+                case COMMAND_UNMARK:
+                    return handleMarkUnmark(trimmed, false);
+                case COMMAND_DELETE:
+                    return handleDelete(trimmed);
+                case COMMAND_FIND:
+                    return handleFind(trimmed);
+                default:
+                    return handleAddTask(trimmed);
             }
-
-            if (trimmed.equals("list")) {
-                return taskList.toString();
-            }
-
-            if (trimmed.startsWith("mark")) {
-                int n = parseTaskNumber(trimmed, "mark");
-                if (n > taskList.size()) {
-                    throw new MinnieException("Error: Invalid task id!");
-                }
-                try {
-                    Task t = taskList.mark(n);
-                    storage.save(taskList);
-                    return "Nice! I've marked this task as done:\n" + t;
-                } catch (IndexOutOfBoundsException e) {
-                    throw new MinnieException("Error: Invalid task id!");
-                }
-            }
-
-            if (trimmed.startsWith("unmark")) {
-                int n = parseTaskNumber(trimmed, "unmark");
-
-                if (n > taskList.size()) {
-                    throw new MinnieException("Error: Invalid task id!");
-                }
-                try {
-                    Task t = taskList.unmark(n);
-                    storage.save(taskList);
-                    return "OK, I've marked this task as not done yet:\n" + t;
-                } catch (IndexOutOfBoundsException e) {
-                    throw new MinnieException("Error: Invalid task id!");
-                }
-            }
-
-            if (trimmed.startsWith("delete")) {
-                int n = parseTaskNumber(trimmed, "delete");
-                Task deleted = taskList.delete(n);
-                storage.save(taskList);
-                return "Noted. I've removed this task:\n" + deleted
-                        + "\nNow you have " + taskList.size() + " tasks in the list.";
-            }
-
-            if (trimmed.startsWith("find")) {
-                String keyword = parseFindKeyword(trimmed);
-                ArrayList<Integer> matches = taskList.find(keyword);
-
-                if (matches.isEmpty()) {
-                    return "No matching tasks found.";
-                }
-
-                StringBuilder sb = new StringBuilder("Here are the matching tasks in your list:\n");
-                for (int taskNumber : matches) {
-                    sb.append(taskNumber + 1).append(". ").append(taskList.get(taskNumber)).append("\n");
-                }
-                return sb.toString().trim();
-            }
-
-            // Otherwise: add task (todo/deadline/event)
-            Task task = parser.parseTask(trimmed);
-            taskList.add(task);
-            storage.save(taskList);
-            return "Got it. I've added this task:\n" + task
-                    + "\nNow you have " + taskList.size() + " tasks in the list.";
 
         } catch (MinnieException e) {
             return e.getMessage();
+        } catch (IndexOutOfBoundsException e) {
+            // Defensive: prevents GUI from “freezing” due to uncaught runtime exceptions.
+            return e.getMessage();
         }
+    }
+
+    private String handleList() {
+        return taskList.toString();
+    }
+
+    private String handleMarkUnmark(String input, boolean isMark) throws MinnieException {
+        int oneBasedIndex = parseTaskNumber(input, isMark ? COMMAND_MARK : COMMAND_UNMARK);
+
+        Task updated = isMark ? taskList.mark(oneBasedIndex) : taskList.unmark(oneBasedIndex);
+        storage.save(taskList);
+
+        if (isMark) {
+            return "Nice! I've marked this task as done:\n" + updated;
+        }
+        return "OK, I've marked this task as not done yet:\n" + updated;
+    }
+
+    private String handleDelete(String input) throws MinnieException {
+        int oneBasedIndex = parseTaskNumber(input, COMMAND_DELETE);
+        Task deleted = taskList.delete(oneBasedIndex);
+        storage.save(taskList);
+
+        return "Noted. I've removed this task:\n" + deleted
+                + "\nNow you have " + taskList.size() + " tasks in the list.";
+    }
+
+    private String handleFind(String input) throws MinnieException {
+        String keyword = parseFindKeyword(input);
+        ArrayList<Integer> matches = taskList.find(keyword);
+
+        if (matches.isEmpty()) {
+            return "No matching tasks found.";
+        }
+
+        StringBuilder sb = new StringBuilder("Here are the matching tasks in your list:\n");
+        for (int zeroBasedIndex : matches) {
+            sb.append(zeroBasedIndex + 1)
+                    .append(". ")
+                    .append(taskList.get(zeroBasedIndex))
+                    .append("\n");
+        }
+        return sb.toString().trim();
+    }
+
+    private String handleAddTask(String input) throws MinnieException {
+        Task task = parser.parseTask(input);
+        taskList.add(task);
+        storage.save(taskList);
+
+        return "Got it. I've added this task:\n" + task
+                + "\nNow you have " + taskList.size() + " tasks in the list.";
+    }
+
+    private String firstWord(String input) {
+        String[] parts = input.split("\\s+", 2);
+        return parts[0];
     }
 
     private int parseTaskNumber(String input, String commandWord) throws MinnieException {
@@ -119,6 +138,7 @@ public class Minnie {
         if (parts.length < 2 || parts[1].trim().isEmpty()) {
             throw new MinnieException("Please provide a task number after '" + commandWord + "'.");
         }
+
         try {
             int n = Integer.parseInt(parts[1].trim());
             if (n <= 0) {
