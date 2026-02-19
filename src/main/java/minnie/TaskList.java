@@ -2,11 +2,9 @@ package minnie;
 
 import java.util.ArrayList;
 
-/**
- * Represents an in-memory list (collection) of tasks and provides operations
- * to add, remove and update tasks.
- */
 public class TaskList {
+
+    private static final String ERROR_TASK_NUMBER_OUT_OF_RANGE = "Task number is out of range.";
 
     private final ArrayList<Task> tasks;
 
@@ -14,46 +12,37 @@ public class TaskList {
         this.tasks = new ArrayList<>();
     }
 
+    /**
+     * Creates a task list from the given tasks.
+     * A defensive copy is made to avoid unexpected external mutation.
+     */
     public TaskList(ArrayList<Task> tasks) {
-        this.tasks = tasks;
+        assert tasks != null : "tasks should not be null";
+        this.tasks = new ArrayList<>(tasks);
     }
 
-    /**
-     * Adds a task into the list.
-     * @param task Task to be added.
-     * @return Task added (to be printed)
-     */
     public Task add(Task task) {
-        tasks.add(task);
+        assert task != null : "task should not be null";
+        this.tasks.add(task);
         return task;
     }
 
-    /**
-     * Returns the number of tasks currently stored.
-     * @return Task count
-     */
     public int size() {
-        return tasks.size();
+        return this.tasks.size();
     }
 
     /**
-     * Returns the task at the given 1-based index (for internal use).
-     * @param index 1-based index
-     * @return The task at the index.
+     * Gets a task by its zero-based index (0..size-1).
      */
-    public Task get(int index) {
-        return tasks.get(index);
+    public Task get(int zeroBasedIndex) {
+        return this.tasks.get(zeroBasedIndex);
     }
 
-    /**
-     * Marks the task at the given 1-based task number as done
-     * @param oneBasedIndex taskNumber 1-based index shown to the user.
-     * @return The updated task.
-     */
     public Task mark(int oneBasedIndex) {
         assert oneBasedIndex > 0 : "taskNumber should be positive";
         int zeroBasedIndex = oneBasedIndex - 1;
         ensureValidIndex(zeroBasedIndex);
+
         Task task = tasks.get(zeroBasedIndex);
         assert task != null : "task at index should not be null";
         
@@ -61,15 +50,11 @@ public class TaskList {
         return task;
     }
 
-    /**
-     * Unarks the task at the given 1-based task number as undone
-     * @param oneBasedIndex taskNumber 1-based index shown to the user.
-     * @return The updated task.
-     */
     public Task unmark(int oneBasedIndex) {
         assert oneBasedIndex > 0 : "taskNumber should be positive";
         int zeroBasedIndex = oneBasedIndex - 1;
         ensureValidIndex(zeroBasedIndex);
+
         Task task = tasks.get(zeroBasedIndex);
         assert task != null : "task at index should not be null";
 
@@ -77,33 +62,26 @@ public class TaskList {
         return task;
     }
 
-    /**
-     * Delete the task at the given 1-based task number.
-     * @param oneBasedIndex taskNumber 1-based index shown to the user.
-     * @return The updated task.
-     */
     public Task delete(int oneBasedIndex) {
         int zeroBasedIndex = oneBasedIndex - 1;
         ensureValidIndex(zeroBasedIndex);
+
         return tasks.remove(zeroBasedIndex);
     }
 
     public ArrayList<Integer> find(String keyword) {
-        ArrayList<Integer> matches = new ArrayList<>();
-        String needle = keyword.toLowerCase();
-
+        ArrayList<Integer> results = new ArrayList<>();
         for (int i = 0; i < tasks.size(); i++) {
-            String haystack = tasks.get(i).getDescription().toLowerCase();
-            if (haystack.contains(needle)) {
-                matches.add(i);
+            if (tasks.get(i).toString().contains(keyword)) {
+                results.add(i); // zero-based index
             }
         }
-        return matches;
+        return results;
     }
 
-    private void ensureValidIndex(int index) {
-        if (index < 0 || index >= tasks.size()) {
-            throw new IndexOutOfBoundsException("Task number is out of range");
+    private void ensureValidIndex(int zeroBasedIndex) {
+        if (zeroBasedIndex < 0 || zeroBasedIndex >= tasks.size()) {
+            throw new IndexOutOfBoundsException(ERROR_TASK_NUMBER_OUT_OF_RANGE);
         }
     }
 
