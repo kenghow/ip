@@ -120,6 +120,9 @@ public class Minnie {
 
     private String handleAddTask(String input) throws MinnieException {
         Task task = parser.parseTask(input);
+        if (isDuplicateTask(task)) {
+            return "This task already exists. I didn't add a duplicate:\n" + task;
+        }
         taskList.add(task);
         storage.save(taskList);
 
@@ -155,5 +158,15 @@ public class Minnie {
             throw new MinnieException("Please provide a keyword after 'find'.");
         }
         return parts[1].trim();
+    }
+
+    private boolean isDuplicateTask(Task newTask) {
+        for (int i = 0; i < taskList.size(); i++) {
+            Task existing = taskList.get(i);
+            if (existing.toString().equals(newTask.toString())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
