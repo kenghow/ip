@@ -51,9 +51,12 @@ public class TaskList {
      * @return The updated task.
      */
     public Task mark(int oneBasedIndex) {
+        assert oneBasedIndex > 0 : "taskNumber should be positive";
         int zeroBasedIndex = oneBasedIndex - 1;
         ensureValidIndex(zeroBasedIndex);
         Task task = tasks.get(zeroBasedIndex);
+        assert task != null : "task at index should not be null";
+        
         task.markAsDone();
         return task;
     }
@@ -64,9 +67,12 @@ public class TaskList {
      * @return The updated task.
      */
     public Task unmark(int oneBasedIndex) {
+        assert oneBasedIndex > 0 : "taskNumber should be positive";
         int zeroBasedIndex = oneBasedIndex - 1;
         ensureValidIndex(zeroBasedIndex);
         Task task = tasks.get(zeroBasedIndex);
+        assert task != null : "task at index should not be null";
+
         task.markAsNotDone();
         return task;
     }
