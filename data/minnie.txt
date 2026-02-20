@@ -1,2 +1,4 @@
 T | 0 | read book
 E | 0 | project meeting | 31/01/2026 1400 | 31/01/2026 1600
+T | 0 | water plant
+T | 0 | study
