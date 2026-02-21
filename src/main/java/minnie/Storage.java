@@ -74,6 +74,16 @@ public class Storage {
         }
     }
 
+    /**
+     * Parses one line from the data file into a {@link Task}.
+     *
+     * <p>Supported formats:
+     * {@code T|0/1|desc}, {@code D|0/1|desc|yyyy-mm-dd}, {@code E|0/1|desc|from|to}
+     *
+     * @param line Raw line from the data file.
+     * @return Parsed {@link Task}.
+     * @throws MinnieException If the line is unknown type, or deadline date is invalid.
+     */
     private Task parseLine(String line) throws MinnieException {
         String[] parts = line.split("\\s*\\|\\s*");
         if (parts.length < 3) {
