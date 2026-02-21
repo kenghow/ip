@@ -25,12 +25,20 @@ public class MainWindow extends AnchorPane {
     private final Image userImage = new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/DaUser.jpeg")));
     private final Image minnieImage = new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/DaDuke.jpeg")));
 
+    /**
+     * Initializes the UI components after the FXML fields are injected.
+     * Binds the scroll pane to always scroll to the latest dialog.
+     */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
     }
 
-    /** Injects the Minnie instance */
+    /**
+     * Injects the Minnie instance used by the GUI and shows the welcome message.
+     *
+     * @param d minnie The chatbot logic component to use for generating responses.
+     */
     public void setMinnie(Minnie d) {
         minnie = d;
         dialogContainer.getChildren().add(

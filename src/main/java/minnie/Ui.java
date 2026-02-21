@@ -1,3 +1,5 @@
+// this class is not used anymore after the GUI implementation
+
 package minnie;
 
 import java.util.ArrayList;

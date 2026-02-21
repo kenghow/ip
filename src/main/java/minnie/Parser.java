@@ -10,7 +10,8 @@ import java.time.format.DateTimeParseException;
 public class Parser {
 
     /**
-     * Parses a user command into a task
+     * Parses a user command into a task.
+     *
      * @param input Full user input line.
      * @return The parse Task instance.
      * @throws MinnieException If the input does not match a supported task format.
@@ -43,7 +44,6 @@ public class Parser {
         if (trimmed.startsWith("event ")) {
             return parseEvent(trimmed.substring(6).trim());
         }
-
         throw new MinnieException("I don't understand this command.");
     }
 

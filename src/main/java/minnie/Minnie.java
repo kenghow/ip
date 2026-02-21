@@ -2,6 +2,10 @@ package minnie;
 
 import java.util.ArrayList;
 
+/**
+ * The main chatbot logic component for Minnie.
+ * Parses user input, updates the task list, and generates response messages.
+ */
 public class Minnie {
 
     private static final String DEFAULT_FILE_PATH = "data/minnie.txt";
@@ -19,10 +23,18 @@ public class Minnie {
     private final Storage storage;
     private final TaskList taskList;
 
+    /**
+     * Create a Minnie instance using the default data file path.
+     */
     public Minnie() {
         this(DEFAULT_FILE_PATH);
     }
 
+    /**
+     * Creates a minnie instance that loads and saves tasks using the given file path.
+     *
+     * @param filePath The relative path of the data file used for storage.
+     */
     public Minnie(String filePath) {
         parser = new Parser();
         storage = new Storage(filePath);
@@ -37,12 +49,21 @@ public class Minnie {
         taskList = loaded;
     }
 
+    /**
+     * Returns the welcome message shown when the app starts.
+     *
+     * @return The welcome message string.
+     */
     public String getWelcomeMessage() {
         return "Hello! I'm Minnie.\nWhat can I do for you?" + (startupWarning.isEmpty() ? "" : "\n" + startupWarning);
     }
 
     /**
-     * GUI entry-point: takes user input, returns Minnie response text.
+     * Generates a response to the given user input.
+     * This method is intended to be called by the GUI controller.
+     *
+     * @param input The raw user input string.
+     * @return Minnie's response message.
      */
     public String getResponse(String input) {
         String trimmed = (input == null) ? "" : input.trim();

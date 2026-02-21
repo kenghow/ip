@@ -16,6 +16,11 @@ import java.util.List;
 public class Storage {
     private final Path filePath;
 
+    /**
+     * Creates a storage handler that reads/writes tasks using the given relative path.
+     *
+     * @param relativePath The relative path to the data file.
+     */
     public Storage(String relativePath) {
         assert relativePath != null : "filePath should not be null";
         this.filePath = Paths.get(relativePath);
@@ -24,6 +29,7 @@ public class Storage {
     /**
      * Loads tasks from the data file.
      * If the file does not exist, returns an empty task list.
+     *
      * @return Tasks loaded from disk.
      * @throws MinnieException If an I/O error occurs or the file format is invalid.
      */
@@ -42,7 +48,6 @@ public class Storage {
                 }
                 tasks.add(parseLine(line));
             }
-
             return tasks;
         } catch (IOException e) {
             throw new MinnieException("Unable to load tasks from disk.");
@@ -52,6 +57,7 @@ public class Storage {
     /**
      * Saves the current task list to disk, overwriting the existing file content.
      * Creates the parent directory if it does not exist.
+     *
      * @param taskList The task list to persist.
      * @throws MinnieException If an I/O error occurs while saving.
      */

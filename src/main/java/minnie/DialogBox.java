@@ -48,10 +48,24 @@ public class DialogBox extends HBox {
         setAlignment(Pos.TOP_LEFT);
     }
 
+    /**
+     * Creates a dialog box representing a user message.
+     *
+     * @param text The message text.
+     * @param img The user's display picture.
+     * @return A dialog box styled for the user.
+     */
     public static DialogBox getUserDialog(String text, Image img) {
         return new DialogBox(text, img);
     }
 
+    /**
+     * Creates a dialog box representing Minnie's message
+     *
+     * @param text The message text.
+     * @param img img Minnie's display picture.
+     * @return A dialog box styled for Minnie.
+     */
     public static DialogBox getMinnieDialog(String text, Image img) {
         var db = new DialogBox(text, img);
         db.flip();
