@@ -1,12 +1,14 @@
 package minnie;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
+import java.util.Objects;
+
 /**
  * Controller for the main GUI.
  */
@@ -17,20 +19,18 @@ public class MainWindow extends AnchorPane {
     private VBox dialogContainer;
     @FXML
     private TextField userInput;
-    @FXML
-    private Button sendButton;
 
     private Minnie minnie;
 
-    private Image userImage = new Image(this.getClass().getResourceAsStream("/images/DaUser.jpeg"));
-    private Image minnieImage = new Image(this.getClass().getResourceAsStream("/images/DaDuke.jpeg"));
+    private final Image userImage = new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/DaUser.jpeg")));
+    private final Image minnieImage = new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/DaDuke.jpeg")));
 
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
     }
 
-    /** Injects the Duke instance */
+    /** Injects the Minnie instance */
     public void setMinnie(Minnie d) {
         minnie = d;
         dialogContainer.getChildren().add(
@@ -39,7 +39,7 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
-     * Creates two dialog boxes, one echoing user input and the other containing Duke's reply and then appends them to
+     * Creates two dialog boxes, one echoing user input and the other containing Minnie's reply and then appends them to
      * the dialog container. Clears the user input after processing.
      */
     @FXML

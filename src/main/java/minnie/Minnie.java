@@ -13,6 +13,8 @@ public class Minnie {
     private static final String COMMAND_DELETE = "delete";
     private static final String COMMAND_FIND = "find";
 
+    private String startupWarning = "";
+
     private final Parser parser;
     private final Storage storage;
     private final TaskList taskList;
@@ -29,13 +31,14 @@ public class Minnie {
         try {
             loaded = new TaskList(storage.load());
         } catch (MinnieException e) {
+            startupWarning = "Note: I could not load your saved data. Starting fresh.";
             loaded = new TaskList();
         }
         taskList = loaded;
     }
 
     public String getWelcomeMessage() {
-        return "Hello! I'm Minnie.\nWhat can I do for you?";
+        return "Hello! I'm Minnie.\nWhat can I do for you?" + (startupWarning.isEmpty() ? "" : "\n" + startupWarning);
     }
 
     /**

@@ -9,11 +9,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 /**
- * A GUI for Duke using FXML.
+ * A GUI for Minnie using FXML.
  */
 public class Main extends Application {
 
-    private Minnie minnie = new Minnie();
+    private final Minnie minnie = new Minnie();
 
     @Override
     public void start(Stage stage) {
@@ -26,7 +26,7 @@ public class Main extends Application {
             stage.setResizable(true);
             stage.setMinWidth(400);
             stage.setMinHeight(600);
-            fxmlLoader.<MainWindow>getController().setMinnie(minnie);  // inject the Duke instance
+            fxmlLoader.<MainWindow>getController().setMinnie(minnie);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
