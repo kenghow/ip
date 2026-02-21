@@ -1,3 +1,8 @@
+# NOTE:
+# This folder supports I/O redirection testing (A-TextUiTesting).
+# If your project uses Gradle, prefer running/building via Gradle commands.
+# Ensure input.txt and EXPECTED.TXT reflect the current behavior.
+
 #!/usr/bin/env bash
 
 # create bin directory if it doesn't exist
